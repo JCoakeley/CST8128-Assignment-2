@@ -1,0 +1,2 @@
+# Normalize line endings to LF on commit, native on checkout
+*.xml text eol=lf
