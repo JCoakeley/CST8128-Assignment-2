@@ -43,6 +43,62 @@ public class Bouncer implements Serializable {
     protected Integer maxTravel;
     @NotNull
     protected Integer mvtDirection;
+
+    public Integer getxPos() {
+        return xPos;
+    }
+
+    public void setxPos(Integer xPos) {
+        this.xPos = xPos;
+    }
+
+    public Integer getyPos() {
+        return yPos;
+    }
+
+    public void setyPos(Integer yPos) {
+        this.yPos = yPos;
+    }
+
+    public Integer getSize() {
+        return size;
+    }
+
+    public void setSize(Integer size) {
+        this.size = size;
+    }
+
+    public Integer getCurrentTravel() {
+        return currentTravel;
+    }
+
+    public void setCurrentTravel(Integer currentTravel) {
+        this.currentTravel = currentTravel;
+    }
+
+    public Integer getMaxTravel() {
+        return maxTravel;
+    }
+
+    public void setMaxTravel(Integer maxTravel) {
+        this.maxTravel = maxTravel;
+    }
+
+    public Integer getMvtDirection() {
+        return mvtDirection;
+    }
+
+    public void setMvtDirection(Integer mvtDirection) {
+        this.mvtDirection = mvtDirection;
+    }
+
+    public Integer getDirChangeCount() {
+        return dirChangeCount;
+    }
+
+    public void setDirChangeCount(Integer dirChangeCount) {
+        this.dirChangeCount = dirChangeCount;
+    }
     @NotNull
     protected Integer dirChangeCount;
 
@@ -52,6 +108,28 @@ public class Bouncer implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    /**
+    * Updates the properties to simulate the passing of one unit of time.
+    */
+    public void timeStep() {
+        if (maxTravel > 0){ // Only change bouncer's position if maxTravel != 0
+            currentTravel += mvtDirection * TRAVEL_SPEED;
+            
+            // Switch directions if maxTravel limit is reached
+            if (Math.abs(currentTravel) >= maxTravel){
+                mvtDirection = -mvtDirection;
+                dirChangeCount++;
+                
+                // When direction change limit is reach, reduce the maxTravel length
+                // and reset the direction change count.
+                if (dirChangeCount > MAX_DIR_CHANGES){
+                    maxTravel -= DECREASE_RATE;
+                    dirChangeCount = 0;
+                }
+            }
+        }
     }
 
     @Override
