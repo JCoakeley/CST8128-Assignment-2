@@ -21,6 +21,17 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.PersistenceUnit;
 import jakarta.transaction.UserTransaction;
 
+/**
+ * JSF controller for managing interactions between the user interface and
+ * the business layer for Bouncer entities.
+ * 
+ * This controller processes user requests, invokes the appropriate business
+ * logic through the application's persistence layer, and provides data for
+ * the JSF views used to create, modify, delete, and display Bouncer
+ * entities.
+ *
+ * @author Joseph Coakeley
+ */
 @Named("bouncerController")
 @SessionScoped
 public class BouncerController implements Serializable {

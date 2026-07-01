@@ -13,8 +13,14 @@ import jakarta.ejb.Startup;
 import java.util.List;
 
 /**
- *
- * @author joey
+ * Singleton Enterprise JavaBean that manages the Bouncer game simulation.
+ * 
+ * When the application starts, this class launches a background thread that
+ * continuously updates every Bouncer in the database by calling its
+ * timeStep() method at a fixed rate. After each update, the modified
+ * Bouncer is persisted so that clients can observe the current game state.
+ * 
+ * @author Joseph Coakeley
  */
 @Startup
 @Singleton

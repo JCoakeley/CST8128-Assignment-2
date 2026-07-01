@@ -18,8 +18,13 @@ import jakarta.transaction.UserTransaction;
 import java.util.List;
 
 /**
- *
- * @author joey
+ * JPA controller that manages the persistence of Bouncer entities.
+ * 
+ * This class provides methods to create, edit, remove, and retrieve
+ * Bouncer entities from the database. It uses an EntityManagerFactory 
+ * to obtain EntityManager instances for performing database transactions.
+ * 
+ * @author Joseph Coakeley
  */
 public class BouncerJpaController implements Serializable {
 

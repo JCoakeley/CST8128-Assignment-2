@@ -9,8 +9,14 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
 /**
- *
- * @author joey
+ * Stateless Enterprise JavaBean that provides business logic and persistence
+ * operations for Bouncer entities.
+ * 
+ * This facade extends AbstractFacade to inherit the standard CRUD
+ * operations while supplying the EntityManager used to interact with 
+ * the application's database.
+ * 
+ * @author Joseph Coakeley
  */
 @Stateless
 public class BouncerFacade extends AbstractFacade<Bouncer> {

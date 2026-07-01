@@ -19,8 +19,11 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 
 /**
- *
- * @author ian
+ * Generic abstract facade that provides common CRUD operations for JPA
+ * entities.
+ * 
+ * @param <T> the entity type managed by this facade
+ * @author Joseph Coakeley
  */
 public abstract class AbstractFacade<T> {
     

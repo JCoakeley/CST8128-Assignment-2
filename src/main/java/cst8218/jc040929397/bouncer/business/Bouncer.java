@@ -8,12 +8,22 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
- *
- * @author joey
+ * Represents a Bouncer entity in the application.
+ * 
+ * A Bouncer has a fixed grid position and moves horizontally back and forth
+ * from that position up to its maximum travel distance. As the game advances,
+ * the timeStep() method updates the Bouncer's movement, reverses its
+ * direction when the travel limit is reached, and gradually decreases its
+ * maximum travel distance after a specified number of direction changes until
+ * the Bouncer becomes stationary.
+ * 
+ * This class is also a JPA entity whose instances are persisted in the
+ * application's database and accessed through RESTful web services.
+ * 
+ * @author Joseph Coakeley
  */
 @Entity
 public class Bouncer implements Serializable {
@@ -39,34 +49,43 @@ public class Bouncer implements Serializable {
     protected Integer mvtDirection;
     protected Integer dirChangeCount;
 
+    // Getter for the xPos of the Bouncer
     public Integer getxPos() {
         return xPos;
     }
 
+    // Setter for the xPos of the Bouncer with a valid range of 0 to X_LIMIT
     public void setxPos(Integer xPos) {
         this.xPos = clamp(xPos, 0, X_LIMIT);
     }
 
+    // Getter for the yPos of the Bouncer
     public Integer getyPos() {
         return yPos;
     }
 
+    // Setter for the yPos of the Bouncer with a valid range of 0 to Y_LIMIT
     public void setyPos(Integer yPos) {
         this.yPos = clamp(yPos, 0, Y_LIMIT);
     }
 
+    // Getter for the size of the Bouncer
     public Integer getSize() {
         return size;
     }
 
+    // Setter for the size of the Bouncer with a valid range of 1 to SIZE_LIMIT
     public void setSize(Integer size) {
         this.size = clamp(size, 1, SIZE_LIMIT);
     }
 
+    // Getter for the currentTravel of the Bouncer
     public Integer getCurrentTravel() {
         return currentTravel;
     }
 
+    /* Setter for the currentTravel of the Bouncer with a valid range of 
+        -maxTravel to +maxTravel so long as maxTravel is not null */
     public void setCurrentTravel(Integer currentTravel) {
         if (currentTravel == null) {
             this.currentTravel = null;
@@ -77,18 +96,22 @@ public class Bouncer implements Serializable {
         }
     }
 
+    // Getter for the mxTravel of the Bouncer
     public Integer getMaxTravel() {
         return maxTravel;
     }
 
+    // Setter for the maxTravel of the Bouncer with a valid range of 0 to MAX_TRAVEL_LIMIT
     public void setMaxTravel(Integer maxTravel) {
         this.maxTravel = clamp(maxTravel, 0, MAX_TRAVEL_LIMIT);
     }
-
+    
+    // Getter for the mvtDirection of the Bouncer
     public Integer getMvtDirection() {
         return mvtDirection;
     }
 
+    // Setter for the mvtDirection of the Bouncer with valid values of 1, -1 or null
     public void setMvtDirection(Integer mvtDirection) {
         if (mvtDirection == null) {
             this.mvtDirection = null;
@@ -97,18 +120,22 @@ public class Bouncer implements Serializable {
         }
     }
 
+    // Getter for the dirChangeCount of the Bouncer
     public Integer getDirChangeCount() {
         return dirChangeCount;
     }
 
+    // Setter for the dirChangeCount of the Bouncer
     public void setDirChangeCount(Integer dirChangeCount) {
         this.dirChangeCount = dirChangeCount;
     }
 
+    //Getter for the id of the Bouncer
     public Long getId() {
         return id;
     }
-
+    
+    // Setter for the id of the Bouncer
     public void setId(Long id) {
         this.id = id;
     }
@@ -135,6 +162,8 @@ public class Bouncer implements Serializable {
         }
     }
     
+    /* Updates the attributes of oldBouncer with attributes of the current Bouncer 
+        so long as those attributes aren't null */
     public void updateNonNull(Bouncer oldBouncer) {
         if (this.xPos != null) {
             oldBouncer.setxPos(this.xPos);
@@ -165,6 +194,7 @@ public class Bouncer implements Serializable {
         }
     }
     
+    // Applies default values to any attribute that is null of the Bouncer
     public void applyDefaults() {
         setxPos(xPos == null ? 0 : xPos);
         setyPos(yPos == null ? 0 : yPos);
@@ -175,6 +205,7 @@ public class Bouncer implements Serializable {
         setDirChangeCount(dirChangeCount == null ? 0 : dirChangeCount);
     }
     
+    // Will clamp value into the range of min to max and return this
     private Integer clamp(Integer value, int min, int max) {
         if (value == null) {
             return null;

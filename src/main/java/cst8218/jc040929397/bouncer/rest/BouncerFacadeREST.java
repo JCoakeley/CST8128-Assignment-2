@@ -21,8 +21,15 @@ import jakarta.ws.rs.core.Response;
 import java.util.List;
 
 /**
+ * RESTful web service that exposes HTTP endpoints for managing
+ * Bouncer entities.
+ * 
+ * This resource provides operations to create, retrieve, update, replace,
+ * and delete Bouncer entities, as well as obtain the total number of
+ * Bouncers stored in the database. Business logic and persistence
+ * operations are delegated to the BouncerFacade Enterprise JavaBean.
  *
- * @author joey
+ * @author Joey Coakeley
  */
 @Stateless
 @Path("cst8218.jc040929397.bouncer.business.bouncer")
@@ -31,6 +38,18 @@ public class BouncerFacadeREST {
     @EJB
     private BouncerFacade bouncerFacade;
 
+    /**
+     * Creates a new Bouncer or partially updates an existing one.
+     * 
+     * If the supplied Bouncer has no id, a new entity is created and persisted.
+     * If an id is supplied, the corresponding Bouncer is updated using only the
+     * non-null values from the request body. If no Bouncer exists with the
+     * supplied id, a 400 Bad Request response is returned.
+     * 
+     * @param entity the Bouncer to create or use to update an existing entity
+     * @return an HTTP response containing the created or updated Bouncer, or an
+     *         error response if the request is invalid
+     */
     @POST
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response create(Bouncer entity) {
@@ -55,43 +74,66 @@ public class BouncerFacadeREST {
         return Response.ok(oldBouncer).build();
     }
     
+    /**
+     * Replaces the Bouncer identified by the specified id.
+     * 
+     * The existing Bouncer is completely replaced by the supplied Bouncer. If
+     * required properties are omitted, default values are applied before the
+     * entity is persisted. A 400 Bad Request response is returned if the
+     * specified id does not exist or if the id in the request body does not match
+     * the id in the request URL.
+     * 
+     * @param id the identifier of the Bouncer to replace
+     * @param entity the replacement Bouncer
+     * @return  an HTTP response containing the updated Bouncer or an error
+     *         response if the request is invalid
+     */
     @POST
     @Path("{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response replaceBouncer(@PathParam("id") Long id, Bouncer entity) {
 
         Bouncer existing = bouncerFacade.find(id);
 
-        // No Bouncer exists with URL id
         if (existing == null) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("No Bouncer exists with id " + id)
                     .build();
         }
 
-        // Body id exists but does not match URL id
         if (entity.getId() != null && !entity.getId().equals(id)) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("Body id does not match URL id")
                     .build();
         }
 
-        // Force the URL id onto the replacement object
         entity.setId(id);
-
-        // Fill missing non-nullable fields with defaults
         entity.applyDefaults();
-
         bouncerFacade.edit(entity);
 
         return Response.ok(entity).build();
     }
 
+    /**
+     * Updates an existing Bouncer using the non-null values supplied in the
+     * request body.
+     * 
+     * Only the non-null properties of the supplied Bouncer overwrite the
+     * corresponding properties of the existing entity. Existing values are
+     * preserved for any properties omitted from the request. A 400 Bad 
+     * Request response is returned if the specified id does not exist or if 
+     * the id in the request body does not match the id in the URL.
+     *
+     * @param id the identifier of the Bouncer to update
+     * @param bouncer the Bouncer containing the updated property values
+     * @return an HTTP response containing the updated Bouncer or an error
+     *         response if the request is invalid
+     */
     @PUT
     @Path("{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response updateBouncer(@PathParam("id") Long id, Bouncer entity) {
 
         Bouncer existing = bouncerFacade.find(id);
@@ -109,21 +151,32 @@ public class BouncerFacadeREST {
         }
 
         entity.updateNonNull(existing);
-
         bouncerFacade.edit(existing);
 
         return Response.ok(existing).build();
     }
     
+    /**
+     * Rejects PUT requests on the root Bouncer resource.
+     *
+     * @param bouncer ignored
+     * @return an HTTP 405 (Method Not Allowed) response
+     */
     @PUT
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response putRoot(Bouncer incoming) {
         return Response.status(Response.Status.METHOD_NOT_ALLOWED)
                 .entity("PUT on the root Bouncer resource is not allowed.")
                 .build();
     }
 
+    /**
+     * Deletes the Bouncer with the specified identifier.
+     *
+     * @param id the identifier of the Bouncer to delete
+     * @return an HTTP response indicating whether the deletion was successful
+     */
     @DELETE
     @Path("{id}")
     public Response remove(@PathParam("id") Long id) {
@@ -137,6 +190,12 @@ public class BouncerFacadeREST {
         return Response.noContent().build();
     }
 
+    /**
+     * Retrieves the Bouncer with the specified identifier.
+     *
+     * @param id the identifier of the Bouncer to retrieve
+     * @return the requested Bouncer, or an HTTP 404 response if it does not exist
+     */
     @GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -150,12 +209,24 @@ public class BouncerFacadeREST {
         return Response.ok(bouncer).build();
     }
 
+    /**
+     * Retrieves all Bouncer entities.
+     *
+     * @return a list containing every Bouncer stored in the database
+     */
     @GET
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<Bouncer> findAll() {
         return bouncerFacade.findAll();
     }
-
+    
+    /**
+     * Retrieves a range of Bouncer entities.
+     *
+     * @param from the index of the first Bouncer in the range
+     * @param to the index of the last Bouncer in the range
+     * @return a list containing the requested range of Bouncer entities
+     */
     @GET
     @Path("{from}/{to}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -163,6 +234,11 @@ public class BouncerFacadeREST {
         return bouncerFacade.findRange(new int[]{from, to});
     }
 
+    /**
+     * Returns the total number of Bouncer entities stored in the database.
+     *
+     * @return the number of Bouncers as plain text
+     */
     @GET
     @Path("count")
     @Produces(MediaType.TEXT_PLAIN)
