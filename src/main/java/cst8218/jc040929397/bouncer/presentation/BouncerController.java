@@ -27,7 +27,7 @@ public class BouncerController implements Serializable {
 
     @Resource
     private UserTransaction utx = null;
-    @PersistenceUnit(unitName = "my_persistence_unit")
+    @PersistenceUnit(unitName = "bouncerPU")
     private EntityManagerFactory emf = null;
 
     private Bouncer current;

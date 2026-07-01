@@ -31,25 +31,20 @@ public class Bouncer implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @NotNull
     protected Integer xPos;
-    @NotNull
     protected Integer yPos;
-    @NotNull
     protected Integer size;
-    @NotNull
     protected Integer currentTravel;
-    @NotNull
     protected Integer maxTravel;
-    @NotNull
     protected Integer mvtDirection;
+    protected Integer dirChangeCount;
 
     public Integer getxPos() {
         return xPos;
     }
 
     public void setxPos(Integer xPos) {
-        this.xPos = xPos;
+        this.xPos = clamp(xPos, 0, X_LIMIT);
     }
 
     public Integer getyPos() {
@@ -57,7 +52,7 @@ public class Bouncer implements Serializable {
     }
 
     public void setyPos(Integer yPos) {
-        this.yPos = yPos;
+        this.yPos = clamp(yPos, 0, Y_LIMIT);
     }
 
     public Integer getSize() {
@@ -65,7 +60,7 @@ public class Bouncer implements Serializable {
     }
 
     public void setSize(Integer size) {
-        this.size = size;
+        this.size = clamp(size, 1, SIZE_LIMIT);
     }
 
     public Integer getCurrentTravel() {
@@ -73,7 +68,13 @@ public class Bouncer implements Serializable {
     }
 
     public void setCurrentTravel(Integer currentTravel) {
-        this.currentTravel = currentTravel;
+        if (currentTravel == null) {
+            this.currentTravel = null;
+        } else if (maxTravel != null) {
+            this.currentTravel = clamp(currentTravel, -maxTravel, maxTravel);
+        } else {
+            this.currentTravel = currentTravel;
+        }
     }
 
     public Integer getMaxTravel() {
@@ -81,7 +82,7 @@ public class Bouncer implements Serializable {
     }
 
     public void setMaxTravel(Integer maxTravel) {
-        this.maxTravel = maxTravel;
+        this.maxTravel = clamp(maxTravel, 0, MAX_TRAVEL_LIMIT);
     }
 
     public Integer getMvtDirection() {
@@ -89,7 +90,11 @@ public class Bouncer implements Serializable {
     }
 
     public void setMvtDirection(Integer mvtDirection) {
-        this.mvtDirection = mvtDirection;
+        if (mvtDirection == null) {
+            this.mvtDirection = null;
+        } else {
+            this.mvtDirection = mvtDirection < 0 ? -1 : 1;
+        }
     }
 
     public Integer getDirChangeCount() {
@@ -99,8 +104,6 @@ public class Bouncer implements Serializable {
     public void setDirChangeCount(Integer dirChangeCount) {
         this.dirChangeCount = dirChangeCount;
     }
-    @NotNull
-    protected Integer dirChangeCount;
 
     public Long getId() {
         return id;
@@ -130,6 +133,54 @@ public class Bouncer implements Serializable {
                 }
             }
         }
+    }
+    
+    public void updateNonNull(Bouncer oldBouncer) {
+        if (this.xPos != null) {
+            oldBouncer.setxPos(this.xPos);
+        }
+
+        if (this.yPos != null) {
+            oldBouncer.setyPos(this.yPos);
+        }
+
+        if (this.size != null) {
+            oldBouncer.setSize(this.size);
+        }
+
+        if (this.currentTravel != null) {
+            oldBouncer.setCurrentTravel(this.currentTravel);
+        }
+
+        if (this.maxTravel != null) {
+            oldBouncer.setMaxTravel(this.maxTravel);
+        }
+
+        if (this.mvtDirection != null) {
+            oldBouncer.setMvtDirection(this.mvtDirection);
+        }
+
+        if (this.dirChangeCount != null) {
+            oldBouncer.setDirChangeCount(this.dirChangeCount);
+        }
+    }
+    
+    public void applyDefaults() {
+        setxPos(xPos == null ? 0 : xPos);
+        setyPos(yPos == null ? 0 : yPos);
+        setSize(size == null ? INITIAL_SIZE : size);
+        setMaxTravel(maxTravel == null ? MAX_TRAVEL_LIMIT : maxTravel);
+        setCurrentTravel(currentTravel == null ? 0 : currentTravel);
+        setMvtDirection(mvtDirection == null ? 1 : mvtDirection);
+        setDirChangeCount(dirChangeCount == null ? 0 : dirChangeCount);
+    }
+    
+    private Integer clamp(Integer value, int min, int max) {
+        if (value == null) {
+            return null;
+        }
+
+        return Math.max(min, Math.min(max, value));
     }
 
     @Override

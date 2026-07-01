@@ -29,8 +29,6 @@
                     <h:inputText id="mvtDirection" value="#{bouncerController.selected.mvtDirection}" title="#{bundle.EditBouncerTitle_mvtDirection}" />
                     <h:outputLabel value="#{bundle.EditBouncerLabel_dirChangeCount}" for="dirChangeCount" />
                     <h:inputText id="dirChangeCount" value="#{bouncerController.selected.dirChangeCount}" title="#{bundle.EditBouncerTitle_dirChangeCount}" />
-                    <h:outputLabel value="#{bundle.EditBouncerLabel_id}" for="id" />
-                    <h:inputText id="id" value="#{bouncerController.selected.id}" title="#{bundle.EditBouncerTitle_id}" />
                 </h:panelGrid>
                 <h:commandLink action="#{bouncerController.update}" value="#{bundle.EditBouncerSaveLink}"/>
                 <br />
