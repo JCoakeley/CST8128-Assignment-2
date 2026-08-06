@@ -1,10 +1,489 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Start Page</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    </head>
-    <body>
-        <h1>Hello World!</h1>
-    </body>
+<head>
+
+    <title>Bouncer Animation</title>
+
+    <style>
+
+        body {
+            font-family: Arial;
+        }
+
+        .bouncer-card {
+
+            border:1px solid black;
+            margin:10px;
+            padding:10px;
+
+        }
+
+        canvas {
+
+            border:1px solid black;
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<h1>
+    Bouncer Animation
+</h1>
+
+
+<p id="error"></p>
+
+
+<button onclick="loadBouncers()">
+    Refresh Bouncers
+</button>
+
+
+
+<h2>
+    Create New Bouncer
+</h2>
+
+
+<form onsubmit="addBouncer(event)">
+
+
+<label>
+X Position:
+</label>
+
+<input 
+type="number"
+id="x"
+/>
+
+<br>
+
+
+
+<label>
+Y Position:
+</label>
+
+<input 
+type="number"
+id="y"
+/>
+
+<br>
+
+
+
+<label>
+Size:
+</label>
+
+<input 
+type="number"
+id="size"
+/>
+
+<br>
+
+
+
+<label>
+Maximum Travel:
+</label>
+
+<input 
+type="number"
+id="maxTravel"
+/>
+
+<br>
+
+
+
+<label>
+Direction:
+</label>
+
+<select id="direction">
+
+<option value="1">
+Right
+</option>
+
+<option value="-1">
+Left
+</option>
+
+</select>
+
+
+<br><br>
+
+
+<button type="submit">
+Add Bouncer
+</button>
+
+
+</form>
+
+
+
+<h2>
+Canvas View
+</h2>
+
+
+<canvas 
+id="canvas"
+width="500"
+height="300">
+
+</canvas>
+
+
+
+
+<h2>
+Bouncer Information
+</h2>
+
+
+<div id="bouncerList">
+
+</div>
+
+
+
+
+<script>
+
+
+const API_URL =
+"http://localhost:8080/CST8128-Assignment-2/resources/cst8218.jc040929397.bouncer.business.bouncer";
+
+
+
+let bouncers=[];
+
+
+
+function loadBouncers(){
+
+
+fetch(API_URL)
+
+
+.then(response=>response.json())
+
+
+.then(data=>{
+
+
+console.log(data);
+
+
+bouncers=data;
+
+
+displayBouncers();
+
+
+drawCanvas();
+
+
+})
+
+
+.catch(error=>{
+
+
+document.getElementById("error").innerHTML =
+"Unable to load bouncers";
+
+
+console.log(error);
+
+
+});
+
+
+}
+
+
+
+
+
+function addBouncer(event){
+
+
+event.preventDefault();
+
+
+
+let bouncer={
+
+
+x:Number(document.getElementById("x").value),
+
+
+y:Number(document.getElementById("y").value),
+
+
+size:Number(document.getElementById("size").value),
+
+
+currentTravel:0,
+
+
+maxTravel:Number(document.getElementById("maxTravel").value),
+
+
+mvtDirection:Number(
+document.getElementById("direction").value
+)
+
+
+};
+
+
+
+
+fetch(API_URL,{
+
+method:"POST",
+
+headers:{
+
+"Content-Type":"application/json"
+
+},
+
+body:JSON.stringify(bouncer)
+
+
+})
+
+
+.then(()=>{
+
+
+loadBouncers();
+
+
+})
+
+
+
+.catch(error=>{
+
+
+console.log(error);
+
+
+});
+
+
+}
+
+
+
+
+
+function moveBouncer(id){
+
+
+
+let bouncer=bouncers.find(
+b=>b.id===id
+);
+
+
+
+bouncer.x=bouncer.x+10;
+
+
+
+fetch(API_URL+"/"+id,{
+
+
+method:"PUT",
+
+
+headers:{
+
+
+"Content-Type":"application/json"
+
+
+},
+
+
+body:JSON.stringify(bouncer)
+
+
+})
+
+
+.then(()=>{
+
+
+loadBouncers();
+
+
+});
+
+
+}
+
+
+
+
+
+function displayBouncers(){
+
+
+let div=document.getElementById(
+"bouncerList"
+);
+
+
+
+div.innerHTML="";
+
+
+
+bouncers.forEach(bouncer=>{
+
+
+
+div.innerHTML += `
+
+
+<div class="bouncer-card">
+
+
+<h3>
+Bouncer ID: ${bouncer.id}
+</h3>
+
+
+<p>
+Position:
+(${bouncer.x}, ${bouncer.y})
+</p>
+
+
+<p>
+Size:
+${bouncer.size}
+</p>
+
+
+<p>
+Direction:
+${bouncer.mvtDirection}
+</p>
+
+
+<p>
+Travel:
+${bouncer.currentTravel}/${bouncer.maxTravel}
+</p>
+
+
+
+<button onclick="moveBouncer(${bouncer.id})">
+
+Move Right
+
+</button>
+
+
+</div>
+
+
+`;
+
+
+
+});
+
+
+}
+
+
+
+
+function drawCanvas(){
+
+
+let canvas=document.getElementById(
+"canvas"
+);
+
+
+let ctx=canvas.getContext("2d");
+
+
+
+ctx.clearRect(
+0,
+0,
+canvas.width,
+canvas.height
+);
+
+
+
+bouncers.forEach(b=>{
+
+
+ctx.beginPath();
+
+
+ctx.arc(
+
+b.x,
+
+b.y,
+
+b.size,
+
+0,
+
+Math.PI*2
+
+);
+
+
+
+ctx.fill();
+
+
+});
+
+
+
+}
+
+
+
+
+
+loadBouncers();
+
+
+
+</script>
+
+
+</body>
+
 </html>
