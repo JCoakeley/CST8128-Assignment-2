@@ -6,6 +6,8 @@ package cst8218.jc040929397.bouncer.rest;
 
 import cst8218.jc040929397.bouncer.business.Bouncer;
 import cst8218.jc040929397.bouncer.business.BouncerFacade;
+import jakarta.annotation.security.DeclareRoles;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import jakarta.ws.rs.Consumes;
@@ -31,6 +33,7 @@ import java.util.List;
  *
  * @author Joey Coakeley
  */
+@DeclareRoles({"BouncerAdmin","ApiGroup"})
 @Stateless
 @Path("cst8218.jc040929397.bouncer.business.bouncer")
 public class BouncerFacadeREST {
@@ -50,6 +53,7 @@ public class BouncerFacadeREST {
      * @return an HTTP response containing the created or updated Bouncer, or an
      *         error response if the request is invalid
      */
+    @RolesAllowed({"BouncerAdmin","ApiGroup"})
     @POST
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response create(Bouncer entity) {
@@ -88,6 +92,7 @@ public class BouncerFacadeREST {
      * @return  an HTTP response containing the updated Bouncer or an error
      *         response if the request is invalid
      */
+    @RolesAllowed({"BouncerAdmin","ApiGroup"})
     @POST
     @Path("{id}")
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -162,6 +167,7 @@ public class BouncerFacadeREST {
      * @param bouncer ignored
      * @return an HTTP 405 (Method Not Allowed) response
      */
+    @RolesAllowed({"BouncerAdmin","ApiGroup"})
     @PUT
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -177,6 +183,7 @@ public class BouncerFacadeREST {
      * @param id the identifier of the Bouncer to delete
      * @return an HTTP response indicating whether the deletion was successful
      */
+    @RolesAllowed({"BouncerAdmin","ApiGroup"})
     @DELETE
     @Path("{id}")
     public Response remove(@PathParam("id") Long id) {
@@ -196,6 +203,7 @@ public class BouncerFacadeREST {
      * @param id the identifier of the Bouncer to retrieve
      * @return the requested Bouncer, or an HTTP 404 response if it does not exist
      */
+    @RolesAllowed({"BouncerAdmin","ApiGroup"})
     @GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -214,6 +222,7 @@ public class BouncerFacadeREST {
      *
      * @return a list containing every Bouncer stored in the database
      */
+    @RolesAllowed({"BouncerAdmin","ApiGroup"})
     @GET
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<Bouncer> findAll() {
@@ -227,6 +236,7 @@ public class BouncerFacadeREST {
      * @param to the index of the last Bouncer in the range
      * @return a list containing the requested range of Bouncer entities
      */
+    @RolesAllowed({"BouncerAdmin","ApiGroup"})
     @GET
     @Path("{from}/{to}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -239,6 +249,7 @@ public class BouncerFacadeREST {
      *
      * @return the number of Bouncers as plain text
      */
+    @RolesAllowed({"BouncerAdmin","ApiGroup"})
     @GET
     @Path("count")
     @Produces(MediaType.TEXT_PLAIN)
