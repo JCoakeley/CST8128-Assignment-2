@@ -1,15 +1,29 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+       xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <title>Facelet Title</title>
         <h:outputStylesheet name="css/jsfcrud.css"/>
     </h:head>
+    <f:view locale="#{localeBean.locale}">
+    <f:loadBundle basename="Bundle" var="msg" /> 
     <h:body>
-        Hello from Facelets
+        #{msg.GreetingMessage}
         <br />
-        <h:link outcome="/bouncer/List" value="Show All Bouncer Items"/>
+        <h:link outcome="/bouncer/List" value="#{msg.CreateBouncerShowAllLink}"/>
+
+  
+            <h:form>
+                <!-- Buttons to change language -->
+                <h:commandButton action="#{localeBean.changeLocale('en')}" value="English" />
+                <h:commandButton action="#{localeBean.changeLocale('fr')}" value="Français" />
+            </h:form>
+
+
     </h:body>
+    </f:view>
 
 </html>
