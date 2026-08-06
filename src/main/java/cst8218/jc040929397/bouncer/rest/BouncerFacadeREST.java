@@ -203,7 +203,7 @@ public class BouncerFacadeREST {
      * @param id the identifier of the Bouncer to retrieve
      * @return the requested Bouncer, or an HTTP 404 response if it does not exist
      */
-    @RolesAllowed({"BouncerAdmin","ApiGroup"})
+    
     @GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
