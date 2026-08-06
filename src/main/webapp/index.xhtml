@@ -3,19 +3,19 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-       xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <title>Facelet Title</title>
         <h:outputStylesheet name="css/jsfcrud.css"/>
     </h:head>
     <f:view locale="#{localeBean.locale}">
-    <f:loadBundle basename="Bundle" var="msg" /> 
-    <h:body>
-        #{msg.GreetingMessage}
-        <br />
-        <h:link outcome="/bouncer/List" value="#{msg.CreateBouncerShowAllLink}"/>
+        <f:loadBundle basename="Bundle" var="msg" /> 
+        <h:body>
+            #{msg.GreetingMessage}
+            <br />
+            <h:link outcome="/bouncer/List" value="#{msg.CreateBouncerShowAllLink}"/>
 
-  
+
             <h:form>
                 <!-- Buttons to change language -->
                 <h:commandButton action="#{localeBean.changeLocale('en')}" value="English" />
@@ -23,7 +23,10 @@
             </h:form>
 
 
-    </h:body>
+            <br />
+            <h:link outcome="/appUser/List" value="Show All AppUser Items"/>
+        </h:body>
+
     </f:view>
 
 </html>
