@@ -17,7 +17,7 @@ function BouncerCanvas({ bouncers }) {
 
 
 
-        // Clear canvas every update
+        // Clear canvas
         ctx.clearRect(
             0,
             0,
@@ -27,8 +27,20 @@ function BouncerCanvas({ bouncers }) {
 
 
 
-        // Draw every bouncer
-        bouncers.forEach((bouncer) => {
+        console.log("Drawing bouncers:", bouncers);
+
+
+
+        bouncers.forEach(bouncer => {
+
+
+            console.log(
+                "Bouncer:",
+                bouncer.x,
+                bouncer.y,
+                bouncer.size
+            );
+
 
 
             ctx.beginPath();
@@ -37,11 +49,11 @@ function BouncerCanvas({ bouncers }) {
 
             ctx.arc(
 
-                bouncer.xPos,
+                Number(bouncer.x),
 
-                bouncer.yPos,
+                Number(bouncer.y),
 
-                bouncer.size,
+                Number(bouncer.size),
 
                 0,
 
@@ -55,14 +67,12 @@ function BouncerCanvas({ bouncers }) {
 
 
 
-            ctx.closePath();
-
-
         });
 
 
 
     }, [bouncers]);
+
 
 
 
@@ -73,12 +83,14 @@ function BouncerCanvas({ bouncers }) {
 
             ref={canvasRef}
 
-            width={600}
+            width="800"
 
-            height={400}
+            height="500"
 
             style={{
+
                 border:"1px solid black"
+
             }}
 
         />
