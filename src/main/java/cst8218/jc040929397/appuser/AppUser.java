@@ -25,6 +25,11 @@ import java.util.HashMap;
 /**
  *
  * @author joey
+ * 
+ * APPUSER represents a user of the app which the following groups have permissions 
+ * WebGroup, ApiGroup, BouncerAdmin. the groups are allowed to access different parts
+ * of the web page. The Appuser table holds the id, the username, the password
+ * and the group.
  */
 @Entity
 @Table(name = "APPUSER")
@@ -60,30 +65,37 @@ public class AppUser implements Serializable {
     @Column(nullable = false)
     private String groupname;
 
+    //get the id of the user
     public Long getId() {
         return id;
     }
     
+    //returns the user id/username
     public String getUserid() {
         return userid;
     }
     
+    //returns the password 
     public String getPassword() {
         return "";
     }
     
+    //returns the group of the user
     public String getGroupname() {
         return groupname;
     }
-
+    
+    //sets the id of the user
     public void setId(Long id) {
         this.id = id;
     }
     
+    //sets the userid/username of the user
     public void setUserid(String userid) {
         this.userid = userid;
     }
     
+    //sets the password of the user and hashes it
     public void setPassword(String password) {
         if (password == null || password.isEmpty()) {
             return;
@@ -116,17 +128,19 @@ public class AppUser implements Serializable {
         this.password = passwordHash.generate(password.toCharArray());
     }
     
+    //sets the group name of the user
     public void setGroupname(String groupname) {
         this.groupname = groupname;
     }
 
+    //creates a hash code that is used to be hashed
     @Override
     public int hashCode() {
         int hash = 0;
         hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
-
+    
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
