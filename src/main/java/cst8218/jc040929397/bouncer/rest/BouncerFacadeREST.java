@@ -135,6 +135,7 @@ public class BouncerFacadeREST {
      * @return an HTTP response containing the updated Bouncer or an error
      *         response if the request is invalid
      */
+    @RolesAllowed({"BouncerAdmin","ApiGroup"})
     @PUT
     @Path("{id}")
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -204,6 +205,7 @@ public class BouncerFacadeREST {
      * @return the requested Bouncer, or an HTTP 404 response if it does not exist
      */
     
+    @RolesAllowed({"BouncerAdmin","ApiGroup"})
     @GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -222,7 +224,6 @@ public class BouncerFacadeREST {
      *
      * @return a list containing every Bouncer stored in the database
      */
-    @RolesAllowed({"BouncerAdmin","ApiGroup"})
     @GET
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<Bouncer> findAll() {

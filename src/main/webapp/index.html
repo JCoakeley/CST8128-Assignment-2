@@ -1,489 +1,715 @@
 <!DOCTYPE html>
 <html>
-<head>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Bouncer Application</title>
 
-    <title>Bouncer Animation</title>
+        <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-    <style>
+        <script async
+                src="https://ga.jspm.io/npm:es-module-shims@1.7.0/dist/es-module-shims.js">
+        </script>
 
-        body {
-            font-family: Arial;
+        <script type="importmap">
+        {
+            "imports": {
+                "react": "https://esm.sh/react?dev",
+                "react-dom/client": "https://esm.sh/react-dom/client?dev"
+            }
         }
-
-        .bouncer-card {
-
-            border:1px solid black;
-            margin:10px;
-            padding:10px;
-
-        }
-
-        canvas {
-
-            border:1px solid black;
-
-        }
-
-    </style>
-
-</head>
-
-
-<body>
-
-
-<h1>
-    Bouncer Animation
-</h1>
-
-
-<p id="error"></p>
-
-
-<button onclick="loadBouncers()">
-    Refresh Bouncers
-</button>
-
-
-
-<h2>
-    Create New Bouncer
-</h2>
-
-
-<form onsubmit="addBouncer(event)">
-
-
-<label>
-X Position:
-</label>
-
-<input 
-type="number"
-id="x"
-/>
-
-<br>
-
-
-
-<label>
-Y Position:
-</label>
-
-<input 
-type="number"
-id="y"
-/>
-
-<br>
-
-
-
-<label>
-Size:
-</label>
-
-<input 
-type="number"
-id="size"
-/>
-
-<br>
-
-
-
-<label>
-Maximum Travel:
-</label>
-
-<input 
-type="number"
-id="maxTravel"
-/>
-
-<br>
-
-
-
-<label>
-Direction:
-</label>
-
-<select id="direction">
-
-<option value="1">
-Right
-</option>
-
-<option value="-1">
-Left
-</option>
-
-</select>
-
-
-<br><br>
-
-
-<button type="submit">
-Add Bouncer
-</button>
-
-
-</form>
-
-
-
-<h2>
-Canvas View
-</h2>
-
-
-<canvas 
-id="canvas"
-width="500"
-height="300">
-
-</canvas>
-
-
-
-
-<h2>
-Bouncer Information
-</h2>
-
-
-<div id="bouncerList">
-
-</div>
-
-
-
-
-<script>
-
-
-const API_URL =
-"http://localhost:8080/CST8128-Assignment-2/resources/cst8218.jc040929397.bouncer.business.bouncer";
-
-
-
-let bouncers=[];
-
-
-
-function loadBouncers(){
-
-
-fetch(API_URL)
-
-
-.then(response=>response.json())
-
-
-.then(data=>{
-
-
-console.log(data);
-
-
-bouncers=data;
-
-
-displayBouncers();
-
-
-drawCanvas();
-
-
-})
-
-
-.catch(error=>{
-
-
-document.getElementById("error").innerHTML =
-"Unable to load bouncers";
-
-
-console.log(error);
-
-
-});
-
-
-}
-
-
-
-
-
-function addBouncer(event){
-
-
-event.preventDefault();
-
-
-
-let bouncer={
-
-
-x:Number(document.getElementById("x").value),
-
-
-y:Number(document.getElementById("y").value),
-
-
-size:Number(document.getElementById("size").value),
-
-
-currentTravel:0,
-
-
-maxTravel:Number(document.getElementById("maxTravel").value),
-
-
-mvtDirection:Number(
-document.getElementById("direction").value
-)
-
-
-};
-
-
-
-
-fetch(API_URL,{
-
-method:"POST",
-
-headers:{
-
-"Content-Type":"application/json"
-
-},
-
-body:JSON.stringify(bouncer)
-
-
-})
-
-
-.then(()=>{
-
-
-loadBouncers();
-
-
-})
-
-
-
-.catch(error=>{
-
-
-console.log(error);
-
-
-});
-
-
-}
-
-
-
-
-
-function moveBouncer(id){
-
-
-
-let bouncer=bouncers.find(
-b=>b.id===id
-);
-
-
-
-bouncer.x=bouncer.x+10;
-
-
-
-fetch(API_URL+"/"+id,{
-
-
-method:"PUT",
-
-
-headers:{
-
-
-"Content-Type":"application/json"
-
-
-},
-
-
-body:JSON.stringify(bouncer)
-
-
-})
-
-
-.then(()=>{
-
-
-loadBouncers();
-
-
-});
-
-
-}
-
-
-
-
-
-function displayBouncers(){
-
-
-let div=document.getElementById(
-"bouncerList"
-);
-
-
-
-div.innerHTML="";
-
-
-
-bouncers.forEach(bouncer=>{
-
-
-
-div.innerHTML += `
-
-
-<div class="bouncer-card">
-
-
-<h3>
-Bouncer ID: ${bouncer.id}
-</h3>
-
-
-<p>
-Position:
-(${bouncer.x}, ${bouncer.y})
-</p>
-
-
-<p>
-Size:
-${bouncer.size}
-</p>
-
-
-<p>
-Direction:
-${bouncer.mvtDirection}
-</p>
-
-
-<p>
-Travel:
-${bouncer.currentTravel}/${bouncer.maxTravel}
-</p>
-
-
-
-<button onclick="moveBouncer(${bouncer.id})">
-
-Move Right
-
-</button>
-
-
-</div>
-
-
-`;
-
-
-
-});
-
-
-}
-
-
-
-
-function drawCanvas(){
-
-
-let canvas=document.getElementById(
-"canvas"
-);
-
-
-let ctx=canvas.getContext("2d");
-
-
-
-ctx.clearRect(
-0,
-0,
-canvas.width,
-canvas.height
-);
-
-
-
-bouncers.forEach(b=>{
-
-
-ctx.beginPath();
-
-
-ctx.arc(
-
-b.x,
-
-b.y,
-
-b.size,
-
-0,
-
-Math.PI*2
-
-);
-
-
-
-ctx.fill();
-
-
-});
-
-
-
-}
-
-
-
-
-
-loadBouncers();
-
-
-
-</script>
-
-
-</body>
-
+        </script>
+
+        <style>
+            body
+            {
+                font-family: Arial, sans-serif;
+                margin: 20px;
+            }
+
+            .header
+            {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .api-login
+            {
+                border: 1px solid #aaa;
+                padding: 12px;
+                margin-bottom: 20px;
+            }
+
+            .api-login input
+            {
+                margin-right: 10px;
+                padding: 5px;
+            }
+
+            canvas
+            {
+                border: 1px solid black;
+                display: block;
+                margin-bottom: 20px;
+            }
+
+            table
+            {
+                border-collapse: collapse;
+                width: 100%;
+            }
+
+            th,
+            td
+            {
+                border: 1px solid #999;
+                padding: 6px;
+                text-align: center;
+            }
+
+            th
+            {
+                background-color: #eee;
+            }
+
+            table input
+            {
+                width: 75px;
+                padding: 4px;
+            }
+
+            button
+            {
+                padding: 5px 10px;
+                cursor: pointer;
+            }
+
+            .error
+            {
+                color: red;
+                margin: 10px 0;
+            }
+
+            .success
+            {
+                color: green;
+                margin: 10px 0;
+            }
+
+            .note
+            {
+                font-size: 0.9em;
+                margin-top: 8px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="root"></div>
+
+        <script type="text/babel" data-type="module">
+
+            import React, {
+                useEffect,
+                useRef,
+                useState
+            } from 'react';
+
+            import { createRoot } from 'react-dom/client';
+
+            const REST_URL =
+                'resources/cst8218.jc040929397.bouncer.business.bouncer';
+
+            function App()
+            {
+                const [bouncers, setBouncers] = useState([]);
+
+                const [username, setUsername] = useState('');
+                const [password, setPassword] = useState('');
+
+                const [edits, setEdits] = useState({});
+
+                const [loadError, setLoadError] = useState('');
+                const [updateError, setUpdateError] = useState('');
+                const [message, setMessage] = useState('');
+
+                const canvasRef = useRef(null);
+
+                /*
+                 * Retrieve all Bouncers from the public REST endpoint.
+                 */
+                const loadBouncers = () =>
+                {
+                    fetch(REST_URL)
+                        .then(response =>
+                        {
+                            if (!response.ok)
+                            {
+                                throw new Error(
+                                    `HTTP error: ${response.status}`
+                                );
+                            }
+
+                            return response.json();
+                        })
+                        .then(data =>
+                        {
+                            setBouncers(data);
+                            setLoadError('');
+                        })
+                        .catch(error =>
+                        {
+                            console.error(
+                                'Unable to retrieve Bouncers:',
+                                error
+                            );
+
+                            setLoadError(
+                                'Unable to retrieve Bouncer data.'
+                            );
+                        });
+                };
+
+
+                /*
+                 * Poll the REST API so the table and canvas represent
+                 * the current state of the Bouncers on the server.
+                 */
+                useEffect(() =>
+                {
+                    loadBouncers();
+
+                    const intervalId =
+                        setInterval(loadBouncers, 100);
+
+                    return () =>
+                    {
+                        clearInterval(intervalId);
+                    };
+
+                }, []);
+
+
+                /*
+                 * Redraw the canvas whenever new Bouncer data
+                 * arrives from the REST API.
+                 */
+                useEffect(() =>
+                {
+                    const canvas = canvasRef.current;
+
+                    if (!canvas)
+                    {
+                        return;
+                    }
+
+                    const context =
+                        canvas.getContext('2d');
+
+                    context.clearRect(
+                        0,
+                        0,
+                        canvas.width,
+                        canvas.height
+                    );
+
+                    /*
+                     * xPos:          0 to 1000
+                     * currentTravel: -1000 to +1000
+                     *
+                     * Total possible logical X range:
+                     * -1000 to 2000 = 3000 units.
+                     */
+                    const xScale =
+                        canvas.width / 3000;
+
+                    /*
+                     * yPos ranges from 0 to 500.
+                     */
+                    const yScale =
+                        canvas.height / 500;
+
+                    bouncers.forEach(bouncer =>
+                    {
+                        const logicalX =
+                            bouncer.xPos +
+                            bouncer.currentTravel;
+
+                        const x =
+                            (logicalX + 1000) *
+                            xScale;
+
+                        const y =
+                            bouncer.yPos *
+                            yScale;
+
+                        context.beginPath();
+
+                        context.arc(
+                            x,
+                            y,
+                            bouncer.size,
+                            0,
+                            2 * Math.PI
+                        );
+
+                        context.fill();
+                    });
+
+                }, [bouncers]);
+
+
+                /*
+                 * Store an edited field locally until Update is
+                 * clicked.
+                 */
+                const handleEdit = (
+                    id,
+                    field,
+                    value
+                ) =>
+                {
+                    setEdits(currentEdits => (
+                    {
+                        ...currentEdits,
+
+                        [id]:
+                        {
+                            ...currentEdits[id],
+                            [field]: value
+                        }
+                    }));
+                };
+
+
+                /*
+                 * Return the edited value if one exists.
+                 * Otherwise display the current REST value.
+                 */
+                const getValue = (
+                    bouncer,
+                    field
+                ) =>
+                {
+                    if (
+                        edits[bouncer.id] &&
+                        edits[bouncer.id][field] !== undefined
+                    )
+                    {
+                        return edits[bouncer.id][field];
+                    }
+
+                    return bouncer[field];
+                };
+
+
+                /*
+                 * Send a partial update to the protected REST
+                 * endpoint using HTTP Basic authentication.
+                 */
+                const updateBouncer = async (bouncer) =>
+                {
+                    setUpdateError('');
+                    setMessage('');
+
+                    if (
+                        username.trim() === '' ||
+                        password === ''
+                    )
+                    {
+                        setUpdateError(
+                            'API username and password are required to make changes.'
+                        );
+
+                        return;
+                    }
+
+                    const editedValues =
+                        edits[bouncer.id];
+
+                    if (
+                        !editedValues ||
+                        Object.keys(editedValues).length === 0
+                    )
+                    {
+                        setUpdateError(
+                            `No changes have been made to Bouncer ${bouncer.id}.`
+                        );
+
+                        return;
+                    }
+
+                    /*
+                     * Convert input values from strings to numbers
+                     * before sending JSON to the REST API.
+                     */
+                    const update =
+                    {
+                        id: bouncer.id
+                    };
+
+                    if (editedValues.xPos !== undefined)
+                    {
+                        update.xPos =
+                            Number(editedValues.xPos);
+                    }
+
+                    if (editedValues.yPos !== undefined)
+                    {
+                        update.yPos =
+                            Number(editedValues.yPos);
+                    }
+
+                    if (editedValues.size !== undefined)
+                    {
+                        update.size =
+                            Number(editedValues.size);
+                    }
+
+                    if (editedValues.maxTravel !== undefined)
+                    {
+                        update.maxTravel =
+                            Number(editedValues.maxTravel);
+                    }
+
+                    const credentials =
+                        btoa(
+                            `${username}:${password}`
+                        );
+
+                    try
+                    {
+                        const response =
+                            await fetch(
+                                `${REST_URL}/${bouncer.id}`,
+                                {
+                                    method: 'PUT',
+
+                                    headers:
+                                    {
+                                        'Content-Type':
+                                            'application/json',
+
+                                        'Accept':
+                                            'application/json',
+
+                                        'Authorization':
+                                            `Basic ${credentials}`
+                                    },
+
+                                    body:
+                                        JSON.stringify(update)
+                                }
+                            );
+
+                        if (!response.ok)
+                        {
+                            if (response.status === 401)
+                            {
+                                throw new Error(
+                                    'Invalid API username or password.'
+                                );
+                            }
+
+                            if (response.status === 403)
+                            {
+                                throw new Error(
+                                    'This user does not have permission to modify Bouncers.'
+                                );
+                            }
+
+                            throw new Error(
+                                `Update failed with HTTP ${response.status}.`
+                            );
+                        }
+
+                        setEdits(currentEdits =>
+                        {
+                            const updatedEdits =
+                                {
+                                    ...currentEdits
+                                };
+
+                            delete updatedEdits[
+                                bouncer.id
+                            ];
+
+                            return updatedEdits;
+                        });
+
+                        setMessage(
+                            `Bouncer ${bouncer.id} was updated successfully.`
+                        );
+
+                        /*
+                         * Immediately retrieve the server version.
+                         * Normal polling will continue afterward.
+                         */
+                        loadBouncers();
+                    }
+                    catch (error)
+                    {
+                        console.error(
+                            'Unable to update Bouncer:',
+                            error
+                        );
+
+                        setError(error.message);
+                    }
+                };
+
+
+                return (
+                    <main>
+
+                        <div className="header">
+                            <h1>Bouncers</h1>
+
+                            <a href="faces/index.xhtml">
+                                Administration
+                            </a>
+                        </div>
+
+
+                        <div className="api-login">
+
+                            <strong>
+                                API Authentication
+                            </strong>
+
+                            <br /><br />
+
+                            <input
+                                type="text"
+                                placeholder="Username"
+                                value={username}
+                                onChange={event =>
+                                    setUsername(
+                                        event.target.value
+                                    )
+                                }
+                            />
+
+                            <input
+                                type="password"
+                                placeholder="Password"
+                                value={password}
+                                onChange={event =>
+                                    setPassword(
+                                        event.target.value
+                                    )
+                                }
+                            />
+
+                            <div className="note">
+                                Authentication is only required
+                                when modifying a Bouncer.
+                            </div>
+
+                        </div>
+
+
+                        {loadError &&
+                            <div className="error">
+                                {loadError}
+                            </div>
+                        }
+
+                        {updateError &&
+                            <div className="error">
+                                {updateError}
+                            </div>
+                        }
+
+                        {message &&
+                            <div className="success">
+                                {message}
+                            </div>
+                        }
+
+
+                        <canvas
+                            ref={canvasRef}
+                            width="1000"
+                            height="500"
+                        />
+
+
+                        <h2>Bouncer Information</h2>
+
+
+                        <table>
+
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>X Position</th>
+                                    <th>Y Position</th>
+                                    <th>Size</th>
+                                    <th>Current Travel</th>
+                                    <th>Max Travel</th>
+                                    <th>Direction</th>
+                                    <th>Direction Changes</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+
+                            <tbody>
+
+                                {bouncers.map(bouncer => (
+
+                                    <tr key={bouncer.id}>
+
+                                        <td>
+                                            {bouncer.id}
+                                        </td>
+
+
+                                        <td>
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                max="1000"
+
+                                                value={
+                                                    getValue(
+                                                        bouncer,
+                                                        'xPos'
+                                                    )
+                                                }
+
+                                                onChange={event =>
+                                                    handleEdit(
+                                                        bouncer.id,
+                                                        'xPos',
+                                                        event.target.value
+                                                    )
+                                                }
+                                            />
+                                        </td>
+
+
+                                        <td>
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                max="500"
+
+                                                value={
+                                                    getValue(
+                                                        bouncer,
+                                                        'yPos'
+                                                    )
+                                                }
+
+                                                onChange={event =>
+                                                    handleEdit(
+                                                        bouncer.id,
+                                                        'yPos',
+                                                        event.target.value
+                                                    )
+                                                }
+                                            />
+                                        </td>
+
+
+                                        <td>
+                                            <input
+                                                type="number"
+                                                min="1"
+                                                max="100"
+
+                                                value={
+                                                    getValue(
+                                                        bouncer,
+                                                        'size'
+                                                    )
+                                                }
+
+                                                onChange={event =>
+                                                    handleEdit(
+                                                        bouncer.id,
+                                                        'size',
+                                                        event.target.value
+                                                    )
+                                                }
+                                            />
+                                        </td>
+
+
+                                        <td>
+                                            {bouncer.currentTravel}
+                                        </td>
+
+
+                                        <td>
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                max="1000"
+
+                                                value={
+                                                    getValue(
+                                                        bouncer,
+                                                        'maxTravel'
+                                                    )
+                                                }
+
+                                                onChange={event =>
+                                                    handleEdit(
+                                                        bouncer.id,
+                                                        'maxTravel',
+                                                        event.target.value
+                                                    )
+                                                }
+                                            />
+                                        </td>
+
+
+                                        <td>
+                                            {bouncer.mvtDirection}
+                                        </td>
+
+
+                                        <td>
+                                            {bouncer.dirChangeCount}
+                                        </td>
+
+
+                                        <td>
+                                            <button
+                                                onClick={() =>
+                                                    updateBouncer(
+                                                        bouncer
+                                                    )
+                                                }
+                                            >
+                                                Update
+                                            </button>
+                                        </td>
+
+                                    </tr>
+
+                                ))}
+
+                            </tbody>
+
+                        </table>
+
+                    </main>
+                );
+            }
+
+
+            const root =
+                createRoot(
+                    document.getElementById('root')
+                );
+
+            root.render(<App />);
+
+        </script>
+
+    </body>
 </html>
