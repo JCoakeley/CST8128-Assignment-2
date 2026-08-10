@@ -19,6 +19,14 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.PersistenceUnit;
 import jakarta.transaction.UserTransaction;
 
+ /* JSF controller for managing interactions between the user interface and
+ * the business layer for appuser entities.
+ * 
+ * This controller processes user requests, invokes the appropriate business
+ * logic through the application's persistence layer, and provides data for
+ * the JSF views used to create, modify, delete, and display appuser
+ * entities.
+*/
 @Named("appUserController")
 @SessionScoped
 public class AppUserController implements Serializable {

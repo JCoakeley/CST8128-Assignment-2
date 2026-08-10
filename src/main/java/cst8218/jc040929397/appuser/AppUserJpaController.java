@@ -17,7 +17,11 @@ import jakarta.transaction.UserTransaction;
 import java.util.List;
 
 /**
- *
+ * JPA controller that manages the persistence of Appuser entities.
+ * 
+ * This class provides methods to create, edit, remove, and retrieve
+ * appuser entities from the database. It uses an EntityManagerFactory 
+ * to obtain EntityManager instances for performing database transactions.
  * @author joey
  */
 public class AppUserJpaController implements Serializable {

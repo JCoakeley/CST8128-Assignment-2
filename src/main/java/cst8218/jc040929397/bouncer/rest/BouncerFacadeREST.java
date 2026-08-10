@@ -30,7 +30,7 @@ import java.util.List;
  * and delete Bouncer entities, as well as obtain the total number of
  * Bouncers stored in the database. Business logic and persistence
  * operations are delegated to the BouncerFacade Enterprise JavaBean.
- *
+ * created two roles called BouncerAdmin and ApiGroup
  * @author Joey Coakeley
  */
 @DeclareRoles({"BouncerAdmin","ApiGroup"})
@@ -47,7 +47,8 @@ public class BouncerFacadeREST {
      * If the supplied Bouncer has no id, a new entity is created and persisted.
      * If an id is supplied, the corresponding Bouncer is updated using only the
      * non-null values from the request body. If no Bouncer exists with the
-     * supplied id, a 400 Bad Request response is returned.
+     * supplied id, a 400 Bad Request response is returned. can only be accessed
+     * by BouncerAdmin and ApiGroup
      * 
      * @param entity the Bouncer to create or use to update an existing entity
      * @return an HTTP response containing the created or updated Bouncer, or an
@@ -86,6 +87,7 @@ public class BouncerFacadeREST {
      * entity is persisted. A 400 Bad Request response is returned if the
      * specified id does not exist or if the id in the request body does not match
      * the id in the request URL.
+     * can only be accessed by BouncerAdmin and ApiGroup
      * 
      * @param id the identifier of the Bouncer to replace
      * @param entity the replacement Bouncer
@@ -129,7 +131,8 @@ public class BouncerFacadeREST {
      * preserved for any properties omitted from the request. A 400 Bad 
      * Request response is returned if the specified id does not exist or if 
      * the id in the request body does not match the id in the URL.
-     *
+     * can only be accessed by BouncerAdmin and ApiGroup
+     * 
      * @param id the identifier of the Bouncer to update
      * @param bouncer the Bouncer containing the updated property values
      * @return an HTTP response containing the updated Bouncer or an error
@@ -180,7 +183,7 @@ public class BouncerFacadeREST {
 
     /**
      * Deletes the Bouncer with the specified identifier.
-     *
+     * can only be accessed by BouncerAdmin and ApiGroup
      * @param id the identifier of the Bouncer to delete
      * @return an HTTP response indicating whether the deletion was successful
      */
@@ -200,7 +203,7 @@ public class BouncerFacadeREST {
 
     /**
      * Retrieves the Bouncer with the specified identifier.
-     *
+     * Can only be accessed by BouncerAdmin and ApiGroup
      * @param id the identifier of the Bouncer to retrieve
      * @return the requested Bouncer, or an HTTP 404 response if it does not exist
      */
@@ -232,7 +235,7 @@ public class BouncerFacadeREST {
     
     /**
      * Retrieves a range of Bouncer entities.
-     *
+     *Can be accessed by BouncerAdmin and ApiGroup
      * @param from the index of the first Bouncer in the range
      * @param to the index of the last Bouncer in the range
      * @return a list containing the requested range of Bouncer entities
@@ -247,7 +250,7 @@ public class BouncerFacadeREST {
 
     /**
      * Returns the total number of Bouncer entities stored in the database.
-     *
+     * can only be accessed by BouncerAdmin and ApiGroup
      * @return the number of Bouncers as plain text
      */
     @RolesAllowed({"BouncerAdmin","ApiGroup"})
